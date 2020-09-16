@@ -59,6 +59,12 @@ static int lastmousemode=0, lastmousex=0, lastmousey=0;
 
 /* ------------------------------------------------------------------ */
 
+// monkeypatch some ability to have third mouse button...
+static unsigned int last_key_down = 0;
+static int third_button_key = 66; //XK_Mode_switch;
+
+/* ------------------------------------------------------------------ */
+
 static void store_colour(Colormap map, unsigned long pixel,
     unsigned short r, unsigned short g, unsigned short b);
 
@@ -654,10 +660,18 @@ static void ProcessKey(ARMul_State *state, XKeyEvent *key)
 static void ProcessButton(ARMul_State *state, XButtonEvent *button)
 {
   arch_key_id kid;
-  fprintf(stderr, "ProcessButton: button is %d\n", button->button);
+  fprintf(stderr, "ProcessButton: button is %d type %d last_key %d\n",
+    button->button,
+    button->type,
+    last_key_down);
+
   switch (button->button) {
     case Button1:
-      kid = ARCH_KEY_button_1;
+      if (last_key_down == third_button_key) {
+        kid = ARCH_KEY_button_2;
+      } else {
+        kid = ARCH_KEY_button_1;
+      }
       break;
     case Button2:
       kid = ARCH_KEY_button_3;
@@ -674,6 +688,8 @@ static void ProcessButton(ARMul_State *state, XButtonEvent *button)
     default:
       return;
   }
+
+  fprintf(stderr, "Sending button %d\n", kid);
 
   keyboard_key_changed(&KBD, kid, button->type == ButtonRelease);
 }
@@ -815,8 +831,15 @@ static void MainPane_Event(ARMul_State *state,XEvent *e) {
       break;
 
     case KeyPress:
+      ProcessKey(state,&(e->xkey));
+      last_key_down = e->xkey.keycode;
+      fprintf(stderr,"KeyPress %d\n", last_key_down);
+      break;
+
     case KeyRelease:
       ProcessKey(state,&(e->xkey));
+      last_key_down = 0;
+      fprintf(stderr,"KeyRelease %d\n", last_key_down);
       break;
 
     case MotionNotify:
