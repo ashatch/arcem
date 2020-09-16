@@ -75,8 +75,8 @@ static struct {
     const char *name;
     KeySym keysym;
 } mouse_key = {
-    "KP_Add",
-    XK_KP_Add
+    "XK_Meta_L",
+    XK_Meta_L
 };
 
 /* Structure to hold most of the X windows values, shared with ControlPane.c */
@@ -654,16 +654,16 @@ static void ProcessKey(ARMul_State *state, XKeyEvent *key)
 static void ProcessButton(ARMul_State *state, XButtonEvent *button)
 {
   arch_key_id kid;
-
+  fprintf(stderr, "ProcessButton: button is %d\n", button->button);
   switch (button->button) {
     case Button1:
       kid = ARCH_KEY_button_1;
       break;
     case Button2:
-      kid = ARCH_KEY_button_2;
+      kid = ARCH_KEY_button_3;
       break;
     case Button3:
-      kid = ARCH_KEY_button_3;
+      kid = ARCH_KEY_button_2;
       break;
     case Button4: // Mousewheel up
       kid = ARCH_KEY_button_4;
