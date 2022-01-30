@@ -26,7 +26,7 @@ You will need a RISCOS rom file. Obtain one (legally), name it `ROM` and keep it
 
 ### Hard Disk Image
 
-Unzip the blank disk image in `hdd-images` and move `HardImage1` to the project root.
+Unzip the blank disk image in `disk-images` and move `HardImage1` to the project root.
 
 Copy `arcemrc` to your home folder as `.arcemrc`:
 
