@@ -1,3 +1,7 @@
 ROM
+hexcmos
 *.o
 arcem
+HardImage*
+FloppyImage*
+hostfs
